@@ -52,6 +52,8 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
+# slience logs that are too noisy
+logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
 
 def parse_args(argv):
     p = argparse.ArgumentParser()
