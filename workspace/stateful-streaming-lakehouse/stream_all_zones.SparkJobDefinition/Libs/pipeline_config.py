@@ -511,7 +511,7 @@ tables["customer"] = FlowConfig(
         "bronze": StageConfig(enabled=True, mode="append"),
         "silver": StageConfig(
             enabled=True,
-            mode="append",,
+            mode="append",
             custom_transform="silver_customer_transformer",
         ),
     },
