@@ -73,6 +73,7 @@ if __name__ == "__main__":
           .config('spark.databricks.delta.properties.defaults.enableDeletionVectors', True)
           .config('spark.databricks.delta.optimizeWrite.enabled', True) # OW enabled since it's streaming micro batches
           .config('spark.native.enabled', True)
+          .config('spark.scheduler.mode', 'FAIR')
           .config('spark.sql.shuffle.partitions', 4) # set low to prevent over shuffling for small streaming jobs and maximize multi-query parallelism
           .getOrCreate())
     
