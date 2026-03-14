@@ -39,6 +39,7 @@ from lakegen.generators.mcmillan_industrial_group import McMillanDataGen
 import notebookutils
 from pyspark.sql import SparkSession
 from pipeline_config import tables
+import argparse
 
 import logging
 import sys
@@ -52,7 +53,14 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
+def parse_args(argv):
+    p = argparse.ArgumentParser()
+    p.add_argument("--producer-connection-string", required=True, help="Event Hub producer connection string for LakeGen to stream synthetic data (e.g. shipment_scan_event)")
+    p.add_argument("--consumer-connection-string", required=True, help="Event Hub consumer connection string for Spark to read streaming data (e.g. shipment_scan_event)")
+    return p.parse_args(argv)
+
 if __name__ == "__main__":
+    args = parse_args(sys.argv[1:])
 
     # Step 1: Create Spark Session
     spark = (SparkSession
@@ -77,12 +85,12 @@ if __name__ == "__main__":
     default_workspace_id = notebookutils.runtime.context['currentWorkspaceId']
     default_lakehouse_id = notebookutils.runtime.context['defaultLakehouseId']
     onelake_endpoint = spark.sparkContext._jsc.hadoopConfiguration().get("trident.onelake.endpoint").split('//')[1]
-    target_folder_uri=f"abfss://{default_workspace_id}@{onelake_endpoint}/{default_lakehouse_id}/Files/landing/"
+    lakehouse_root_uri=f"abfss://{default_workspace_id}@{onelake_endpoint}/{default_lakehouse_id}"
 
-    logger.info(target_folder_uri)
+    logger.info(lakehouse_root_uri)
     data_gen = McMillanDataGen(
-        target_folder_uri=f"abfss://{default_workspace_id}@{onelake_endpoint}/{default_lakehouse_id}/Files/landing/",
-        kafka_connection_string='',
+        target_folder_uri=f"{lakehouse_root_uri}/Files/landing/",
+        kafka_connection_string=args.producer_connection_string,
         output_type_map={
             "order": "json",
             "shipment": "json",
@@ -113,11 +121,14 @@ if __name__ == "__main__":
         'archive_uri': "Files/archive",
         'landing_uri': "Files/landing",
         'trigger_interval': '1 seconds', # default if not set at table level
-        'await_termination': True #await_termination needed to keep Spark job from reaching terminal state
+        'await_termination': True, # await_termination needed to keep Spark job from reaching terminal state
+        'job_lock_timeout_seconds': 60, # Timeout for acquiring job lock to prevent multiple concurrent runs of the same job
+        'job_lock_path': f"{lakehouse_root_uri}/Files/job_locks" # abfss path for job locks because it's not written via spark
     }
 
     # Step 2: Initialize controller
     logger.info("Initializing ArcFlow Controller...")
+    tables["shipment_scan_event"].source_uri = args.consumer_connection_string
     controller = Controller(
         spark=spark,
         config=config,
