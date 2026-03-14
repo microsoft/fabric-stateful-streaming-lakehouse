@@ -12,7 +12,7 @@ find_replace:
     is_regex: "true"
     item_type: "Notebook" # filter on notebook files
   # lakehouse GUID in known_lakehouses array
-  - find_value: a7c7038f-32a5-45b6-a126-4d3c0ebdf019
+  - find_value: aa7b8001-02f5-4fba-b3a1-8e94fd023e2f
     replace_value:
       _ALL_: "$items.Lakehouse.sales_and_logistics.$id" # lakehouse GUID (dynamic)
     item_type: "Notebook" # filter on notebook files
