@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Eventstream",
+    "displayName": "shipment_scan_events"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "4f6bfdcd-0123-a0c6-4255-e454558e1179"
+  }
+}
