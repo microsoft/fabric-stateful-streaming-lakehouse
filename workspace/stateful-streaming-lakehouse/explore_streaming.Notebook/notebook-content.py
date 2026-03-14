@@ -33,7 +33,7 @@
 #   <table style="border: none; margin: 0; padding: 0; border-collapse: collapse;">
 #     <tr>
 #       <td style="border: none; vertical-align: middle; text-align: left; padding: 0; margin: 0;">
-#         <img src="https://github.com/microsoft/fabric-analytics-roadshow-lab/blob/main/assets/images/spark/analytics.png?raw=true" width="140" />
+#         <img src="https://raw.githubusercontent.com/microsoft/fabric-analytics-roadshow-lab/main/assets/images/spark/analytics.png" width="140" />
 #       </td>
 #       <td style="border: none; vertical-align: middle; padding-left: 0px; text-align: left; padding-right: 0; padding-top: 0; padding-bottom: 0;">
 #         <h1 style="font-weight: bold; margin: 0;">Stateful Streaming Lakehouse</h1>
@@ -67,7 +67,8 @@
 # ### The Target Schema
 # By the end of the lab, you'll understand some basic concepts and then see the outcome of a mature data engineering pipeline:
 # 
-# ![McMillian Industrial Group Silver Schema](https://github.com/microsoft/fabric-analytics-roadshow-lab/blob/main/assets/images/spark/silver-erd.png?raw=true)
+# ![McMillian Industrial Group Silver Schema](https://raw.githubusercontent.com/microsoft/fabric-analytics-roadshow-lab/main/assets/images/spark/silver-erd.png)
+# 
 # 
 # ---
 
