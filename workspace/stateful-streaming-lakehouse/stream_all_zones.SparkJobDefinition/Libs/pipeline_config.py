@@ -96,8 +96,7 @@ tables["item"] = FlowConfig(
         ),
         "silver": StageConfig(
             enabled=True,
-            mode="merge",
-            merge_keys=["item_id"],
+            mode="append",
             custom_transform="silver_item",
         ),
     },
@@ -512,8 +511,7 @@ tables["customer"] = FlowConfig(
         "bronze": StageConfig(enabled=True, mode="append"),
         "silver": StageConfig(
             enabled=True,
-            mode="upsert",
-            merge_keys=["customer_id"],
+            mode="append",,
             custom_transform="silver_customer_transformer",
         ),
     },
