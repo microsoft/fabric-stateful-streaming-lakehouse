@@ -232,9 +232,9 @@ from arcflow import FlowConfig, StageConfig, ZonePipeline
 
 # MARKDOWN ********************
 
-# Start by creating a new YAML file in the Resources tab on the left pane:
+# 🎯 Creating a new YAML file in the Resources tab on the left pane:
 # 1. Click **Resources**
-# 1. Click the 3 dots `...` and choose **New file**
+# 1. Click the 3 dots `...` next **Built-in** and choose **New file**
 # 1. Name file as `pipeline.yml`
 # 1. Expand the **Built-in** section and you will see your new file
 # 1. Click the 2 dots `...` and choose **View and edit**
@@ -260,7 +260,7 @@ tables:
     zones:
       bronze:
         mode: append
-        schema_name: arcflow_bronze
+        table_name: shipment_scan_event_test
 
 # METADATA ********************
 
@@ -273,7 +273,7 @@ tables:
 
 # MARKDOWN ********************
 
-# Click the editor **save** button. Next, add the `shipment_scan_events` Event Hub connection string as the `source_uri` in your `pipeline.yml` file:
+# 🎯 Click the editor **save** button. Next, add the `shipment_scan_events` Event Hub connection string as the `source_uri` in your `pipeline.yml` file:
 # 
 # 1. Go to your **Fabric Workspace**
 # 1. Open the **shipment_scan_events** Eventstream inside the `stateful-streaming-lakehouse` folder
@@ -281,7 +281,7 @@ tables:
 # 1. With the _Event Hub_ protocol selected, click **SAS Key Authentication**
 # 1. Click the **Show** icon next to **Connection string-primary key**
 # 1. Click the **Copy** icon to save it to your clipboard
-# 1. Return to the **arcflow_elt_framework** notebook and paste the connection string into `source_uri`, replacing `Endpoint=sb://...`. Ensure there is a space after the colon — it should look like `source_uri: Endpoint=sb://...`
+# 1. Return to the **arcflow_elt_framework** notebook and paste the connection string into `source_uri`, replacing `Endpoint=sb://...`. Ensure there is a space after `source_uri:` — it should look like `source_uri: Endpoint=sb://...`
 # 1. Click the **save** icon in the file editor
 # 
 # > ⚠️ **Security note:** In production, store secrets in [Azure Key Vault](https://learn.microsoft.com/azure/key-vault/general/overview) and access them via Python. Inline connection strings are acceptable for demo purposes only.
@@ -332,7 +332,7 @@ display(df_preview)
 
 # MARKDOWN ********************
 
-# Now update the cell above: change `raw=True` to `raw=False` (or remove the parameter entirely) and re-run. Notice how the `body` column now has the schema applied — the framework handles deserialization automatically.
+# 🎯 Update the cell above: change `raw=True` to `raw=False` (or remove the parameter entirely) and re-run. Notice how the `body` column now has the schema applied — the framework handles deserialization automatically.
 # 
 # Next, run the cell below using `test_output` to see the data **as it would be written** to the target bronze Delta table. Expand the `body` column and notice how field names are automatically normalized to `snake_case` — no extra boilerplate, as it's built into the framework.
 
@@ -419,7 +419,7 @@ def silver_shipment_scan_event(df) -> DataFrame:
 
 # MARKDOWN ********************
 
-# Now update `pipeline.yml` to add `custom_transform: explode_message_payload` to the bronze zone, then click **save** in the file editor.
+# 🎯 Update `pipeline.yml` to add `custom_transform: explode_message_payload` to the bronze zone, then click **save** in the file editor.
 # 
 # Run the cell below to reload the configuration and see the updated bronze output with the exploded message payload applied:
 
@@ -448,12 +448,12 @@ display(df_preview)
 
 # ### Test End-to-End: Bronze → Silver
 # 
-# Now add the silver zone to `pipeline.yml` by appending the following under the `zones:` key:
+# 🎯 Add the silver zone to `pipeline.yml` by appending the following under the `zones:` key:
 # 
 # ```yaml
 # silver:
 #         mode: append
-#         table_name: shipment_scan_event2
+#         table_name: shipment_scan_event_test
 #         custom_transform: silver_shipment_scan_event
 # ```
 # 
@@ -490,7 +490,7 @@ display(df_preview)
 # 
 # Now run the real thing — the controller starts streaming queries for every configured table and zone in one call.
 # 
-# > ⚡ **Event-driven chaining:** By default, ArcFlow uses a [`StreamingQueryListener`](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html#reporting-metrics-programmatically-using-asynchronous-apis) to cascade zones automatically. The upstream most zone (i.e. Bronze) runs with your configured trigger; when it produces data, the listener spawns silver as `availableNow` — no polling, no manual sequencing. If new data arrives while silver is already running, it queues a re-trigger automatically.
+# > ⚡ **Event-driven chaining:** By default, ArcFlow uses a [`StreamingQueryListener`](https://spark.apache.org/docs/3.5.6/structured-streaming-programming-guide.html#reporting-metrics-programmatically-using-asynchronous-apis) to cascade zones automatically. The upstream most zone (i.e. Bronze) runs with your configured trigger; when it produces data, the listener spawns silver as `availableNow` — no polling, no manual sequencing. If new data arrives while silver is already running, it queues a re-trigger automatically.
 
 
 # CELL ********************
@@ -530,6 +530,26 @@ display(status_df)
 
 # MARKDOWN ********************
 
+# ###### 🎯 Write a query or run the below to explore the data streaming into the `silver.shipment_scan_event_test` table.
+
+# CELL ********************
+
+# MAGIC %%sql
+# MAGIC SELECT facility_id, COUNT(1) AS scan_event_count
+# MAGIC FROM silver.shipment_scan_event_test
+# MAGIC GROUP BY ALL
+# MAGIC ORDER BY COUNT(1) DESC
+# MAGIC LIMIT 5
+
+# METADATA ********************
+
+# META {
+# META   "language": "sparksql",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# MARKDOWN ********************
+
 # When you're done exploring, stop all running streams with one call:
 
 
@@ -548,7 +568,7 @@ controller.stop_all()
 
 # ### Batch Mode with Stateful Processing
 # 
-# Remember the `availableNow` trigger from Part 1? Update `trigger_mode` to `availableNow` in your `pipeline.yml`, save, and re-run the pipeline below.
+# 🎯 Switch to Batch Mode: Remember the `availableNow` trigger from Part 1? Update `trigger_mode` to `availableNow` in your `pipeline.yml`, save, and re-run the pipeline below.
 # 
 # This runs a **batch job with streaming state** — it processes all available data since the last checkpoint and stops. You get incremental processing without a long-running stream. Schedule this from a [Data Factory Pipeline](https://learn.microsoft.com/en-us/fabric/data-factory/notebook-activity) on any interval for use cases that don't require low-latency updates.
 # 
@@ -602,7 +622,7 @@ display(status_df)
 # | **Silver latency** | End-to-end latency through both zones — the cost of each transformation step |
 # | **Cross-table join** | Joining silver tables for analytics — the data is ready for dimensional modeling or ad-hoc queries |
 # 
-# > 🔍 **Notice:** No Delta configs are being set manually in these queries. The `SparkConfigurator` that ran at controller init auto-applied production-grade settings — [auto compaction](https://learn.microsoft.com/fabric/data-engineering/delta-optimization-and-v-order?tabs=sparksql#delta-table-maintenance), optimizeWrite, V-Order, zstd compression, and AQE — so you get optimal table performance without per-table tuning.
+# > 🔍 **Notice:** No Delta configs are being set manually in these queries. The `SparkConfigurator` that ran at controller init auto-applied production-grade settings — [auto compaction](https://learn.microsoft.com/en-us/fabric/data-engineering/table-compaction?tabs=sparksql#auto-compaction), optimizeWrite, V-Order, zstd compression, and AQE — so you get optimal table performance without per-table tuning.
 # 
 # > 📡 **Why Eventstream over files?** For high-velocity use cases like shipment scan events, message brokers ([Fabric Eventstream](https://learn.microsoft.com/fabric/real-time-intelligence/event-streams/overview), Azure Event Hubs, Kafka) are preferred over file-based ingestion. They provide ordering guarantees, back-pressure handling, and significantly lower end-to-end latency than polling object storage. Compare the bronze latency below for `shipment_scan_event` (Eventstream) vs. the file-based entities.
 # 
@@ -617,13 +637,15 @@ display(status_df)
 # > ```
 # >
 # > This keeps the landing directory small so listing stays fast. ArcFlow handles this automatically via the `archive_uri` config. Message brokers avoid the problem entirely — offset tracking is O(1) regardless of history depth.
+# 
+# 🎯 Run the below queries and build a line chart to visualize the latency of each streaming batch
 
 
 # CELL ********************
 
 # MAGIC %%sql
 # MAGIC SELECT data.generated_at, _processing_timestamp, (unix_millis(_processing_timestamp) - unix_millis(cast(data.generated_at as timestamp))) / 1000.0 AS seconds_latency_from_source 
-# MAGIC FROM bronze.order
+# MAGIC FROM bronze.shipment_scan_event
 # MAGIC group by all
 # MAGIC order by cast(data.generated_at as timestamp) desc LIMIT 100
 

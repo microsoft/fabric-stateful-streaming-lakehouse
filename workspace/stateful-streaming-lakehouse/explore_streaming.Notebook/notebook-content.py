@@ -82,7 +82,7 @@
 
 # MARKDOWN ********************
 
-# ## Step 1: Get the Eventstream connection strings
+# ## 🎯 Step 1: Get the Eventstream connection strings
 # 
 # You will need **two connection strings** from the Eventstream:
 # 
@@ -122,9 +122,9 @@ consumer_connection_string = "<PASTE Spark connection string>"
 
 # MARKDOWN ********************
 
-# ## Step 2: Populate SJD Command Line Arguments
+# ## 🎯 Step 2: Populate SJD Command Line Arguments
 # 
-# 1. Run the below cell to form the command line argument for our Spark Job Defintion
+# 1. Run the below cell to form the command line arguments for our Spark Job Definition
 # 1. **Copy** the output
 # 1. Go to the [stream_all_zones](https://app.powerbi.com/groups/$workspaceId/sparkjobdefinitions/$sparkJobDefinitionId?experience=fabric-developer) Spark Job Definition
 # 1. **Paste** the value into the `Command line arguments` field
@@ -721,7 +721,7 @@ mem_query.awaitTermination()
 
 # MARKDOWN ********************
 
-# ### 🎯 Challenge: Query the Shipment Table
+# ### 🎯 Challenge: Query the Order Table
 # 
 # Query the `order_preivew` temporary view just like you would with a table.
 # 
@@ -814,7 +814,7 @@ df.createOrReplaceTempView("order_preview")
 # 
 # ---
 # 
-# To simplify reading from the Eventstream, add an Eventstream connection via the _Data items_ pane on the left:
+# ##### 🎯 To simplify reading from the Eventstream, add an Eventstream connection via the _Data items_ pane on the left:
 # 1. Make sure the **Data items** tab is selected in the left-side _Explorer_
 # 1. Click **Add data items**
 # 1. Choose **From Real-Time Hub**
@@ -855,7 +855,7 @@ eventstream_options = {
     "eventstream.datasourceid": __in_eventstream_datasource_id
 }
 
-sse_stream_test_df = (
+shipment_scan_event_df = (
     spark.read
     .format("kafka")
     .options(**eventstream_options)
@@ -866,7 +866,7 @@ sse_stream_test_df = (
     .limit(4)
 )
 
-display(sse_stream_test_df)
+display(shipment_scan_event_df)
 
 # METADATA ********************
 
@@ -888,10 +888,14 @@ display(sse_stream_test_df)
 # 
 # See how much of the DataFrame you can parse using the schema struct defined below. Don't worry — the next section walks through each transformation step-by-step if you aren't able to complete it. The goal is a **flattened DataFrame** where each `shipment_scan_event` is its own row with all fields as top-level columns.
 # 
-# > **Tip:** Avoid reusing prior DataFrame variable names like `shipment_stream_df` or overusing `df` when chaining transformations. Use distinct names at each step to avoid accidentally overriding an earlier assignment.
+# > **Tip 1** Avoid reusing prior DataFrame variable names like `shipment_stream_df` or overusing `df` when chaining transformations. Use distinct names at each step to avoid accidentally overriding an earlier assignment.
+# 
+# > **Tip 2** PySpark function are already aliased as `sf` (spark functions). If it was not already imported you would add `import pyspark.sql.functions as sf`
 
 
 # CELL ********************
+
+import pyspark.sql.functions as sf
 
 shipment_scan_event_schema=StructType( [ StructField( "_meta", StructType( [ StructField("enqueuedTime", StringType(), True), StructField("producer", StringType(), True), StructField("recordType", StringType(), True), StructField("schemaVersion", StringType(), True), ] ), True, ), StructField( "data", ArrayType( StructType( [ StructField( "AdditionalData", StructType( [ StructField("condition", StringType(), True), StructField("loadId", StringType(), True), StructField("method", StringType(), True), StructField("note", StringType(), True), StructField("reason", StringType(), True), StructField("reroute", StringType(), True), StructField("resolution", StringType(), True), StructField("review", StringType(), True), StructField("signedBy", StringType(), True), StructField("sortDecision", StringType(), True), StructField("stopSequence", LongType(), True), StructField( "transportType", StringType(), True ), StructField("vehicleId", StringType(), True), ] ), True, ), StructField( "CurrentDestinationFacilityId", StringType(), True ), StructField("CurrentOriginFacilityId", StringType(), True), StructField("CurrentServiceLevel", StringType(), True), StructField("EmployeeId", StringType(), True), StructField("EstimatedArrivalTime", StringType(), True), StructField("EventId", StringType(), True), StructField("EventTimestamp", StringType(), True), StructField("EventType", StringType(), True), StructField("ExceptionCode", StringType(), True), StructField("ExceptionSeverity", StringType(), True), StructField("FacilityId", StringType(), True), StructField("GeneratedAt", StringType(), True), StructField("LocationLatitude", DoubleType(), True), StructField("LocationLongitude", DoubleType(), True), StructField("NextWaypointFacilityId", StringType(), True), StructField("OrganizationId", LongType(), True), StructField( "PlannedPathSnapshot", ArrayType(StringType(), True), True, ), StructField("RelatedExceptionEventId", StringType(), True), StructField("ResolutionAction", StringType(), True), StructField("RouteId", StringType(), True), StructField("ScanDeviceId", StringType(), True), StructField("ScheduleId", StringType(), True), StructField("SequenceNumber", LongType(), True), StructField("ShipmentId", StringType(), True), StructField("SortLaneId", StringType(), True), StructField("SortingEquipmentId", StringType(), True), StructField("TrackingNumber", StringType(), True), ] ), True, ), True, ), ] )
 
@@ -925,7 +929,7 @@ shipment_scan_event_schema=StructType( [ StructField( "_meta", StructType( [ Str
 
 # CELL ********************
 
-casted_shipment_stream_df = sse_stream_test_df.withColumn("value", sf.col("value").cast("string"))
+casted_shipment_stream_df = shipment_scan_event_df.withColumn("value", sf.col("value").cast("string"))
 display(casted_shipment_stream_df)
 
 # METADATA ********************
