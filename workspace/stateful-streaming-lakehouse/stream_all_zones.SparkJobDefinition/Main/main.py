@@ -124,7 +124,7 @@ if __name__ == "__main__":
         'checkpoint_uri': "Files/checkpoints",
         'archive_uri': "Files/archive",
         'landing_uri': "Files/landing",
-        'trigger_interval': '1 seconds', # default if not set at table level
+        'trigger_interval': '2 seconds', # default if not set at table level
         'await_termination': True, # await_termination needed to keep Spark job from reaching terminal state
         'job_lock_timeout_seconds': 60, # Timeout for acquiring job lock to prevent multiple concurrent runs of the same job
         'job_lock_path': f"{lakehouse_root_uri}/Files/job_locks" # abfss path for job locks because it's not written via spark
