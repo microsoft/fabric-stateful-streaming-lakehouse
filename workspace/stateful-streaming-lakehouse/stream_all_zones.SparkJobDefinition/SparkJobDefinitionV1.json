@@ -1,0 +1,13 @@
+{
+  "executableFile": "main.py",
+  "defaultLakehouseArtifactId": "aa7b8001-02f5-4fba-b3a1-8e94fd023e2f",
+  "mainClass": "",
+  "additionalLakehouseIds": [],
+  "retryPolicy": null,
+  "commandLineArguments": "",
+  "additionalLibraryUris": [
+    "pipeline_config.py"
+  ],
+  "language": "Python",
+  "environmentArtifactId": "52bd395f-4a24-85cd-4a04-9c17dcdc2a8c"
+}
