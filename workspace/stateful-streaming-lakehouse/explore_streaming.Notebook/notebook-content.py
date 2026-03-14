@@ -1310,5 +1310,5 @@ display(spark.sql('SELECT * FROM dbo.silver_sse LIMIT 5'))
 # 
 # > **Up next → Part 2:** We take the exact same transforms and package them into a reusable streaming framework (ArcFlow) — see how software engineering practices change everything.
 # 
-# Click to open the next Notebook 👉 **[arcflow_framework](https://app.powerbi.com/groups/$workspaceId/synapsenotebook/$notebookId?experience=fabric-developer)**
+# Next open the next **arcflow_framework** Notebook to continue the tutorial.
 
