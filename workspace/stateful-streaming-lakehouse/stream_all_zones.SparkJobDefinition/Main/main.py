@@ -80,6 +80,11 @@ if __name__ == "__main__":
           .config('spark.databricks.delta.optimizeWrite.enabled', True) # OW enabled since it's streaming micro batches
           .config('spark.native.enabled', True)
           .config('spark.scheduler.mode', 'FAIR')
+          .config('spark.ui.retainedJobs', '200')
+          .config('spark.ui.retainedStages', '200')
+          .config('spark.ui.retainedTasks', '5000')
+          .config('spark.sql.streaming.ui.retainedQueries', '100')
+          .config('spark.sql.ui.retainedExecutions', '200')
           .config('spark.sql.shuffle.partitions', 4) # set low to prevent over shuffling for small streaming jobs and maximize multi-query parallelism
           .getOrCreate())
     
@@ -129,6 +134,7 @@ if __name__ == "__main__":
         'archive_uri': "Files/archive",
         'landing_uri': "Files/landing",
         'trigger_interval': '2 seconds', # default if not set at table level
+        'event_driven_chaining': True, # if True, downstream transformations will be triggered immediately after upstream completes instead of waiting for next trigger interval
         'await_termination': True, # await_termination needed to keep Spark job from reaching terminal state
         'job_lock_timeout_seconds': 60, # Timeout for acquiring job lock to prevent multiple concurrent runs of the same job
         'job_lock_path': f"{lakehouse_root_uri}/Files/job_locks", # abfss path for job locks because it's not written via spark
