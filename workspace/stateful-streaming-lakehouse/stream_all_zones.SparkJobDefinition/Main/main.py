@@ -11,7 +11,7 @@ DEPLOYMENT INSTRUCTIONS:
    
 2. In Fabric Workspace:
    - Go to Environment settings
-   - Upload: dist/arcflow-0.1.0-py3-none-any.whl
+   - Upload: dist/arcflow-0.1.6-py3-none-any.whl
    - Add to environment libraries
    
 3. Create Spark Job Definition:
@@ -52,8 +52,12 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
-# slience logs that are too noisy
-logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
+
+# Only show INFO for arcflow/lakegen, silence everything else
+logging.getLogger().setLevel(logging.WARNING)
+logging.getLogger("arcflow").setLevel(logging.INFO)
+logging.getLogger("lakegen").setLevel(logging.INFO)
+logging.getLogger("__main__").setLevel(logging.INFO)
 
 def parse_args(argv):
     p = argparse.ArgumentParser()
@@ -127,7 +131,9 @@ if __name__ == "__main__":
         'trigger_interval': '2 seconds', # default if not set at table level
         'await_termination': True, # await_termination needed to keep Spark job from reaching terminal state
         'job_lock_timeout_seconds': 60, # Timeout for acquiring job lock to prevent multiple concurrent runs of the same job
-        'job_lock_path': f"{lakehouse_root_uri}/Files/job_locks" # abfss path for job locks because it's not written via spark
+        'job_lock_path': f"{lakehouse_root_uri}/Files/job_locks", # abfss path for job locks because it's not written via spark
+	'job_lock_enabled': True,
+	'job_id': 'stateful_streaming_lakehouse'
     }
 
     # Step 2: Initialize controller
