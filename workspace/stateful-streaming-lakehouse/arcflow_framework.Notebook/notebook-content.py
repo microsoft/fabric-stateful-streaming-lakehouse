@@ -675,9 +675,9 @@ display(status_df)
 
 # MAGIC %%sql
 # MAGIC SELECT cast(data.generated_at as timestamp) as generated_at, (unix_millis(_processing_timestamp) - unix_millis(cast(data.generated_at as timestamp))) / 1000.0 AS seconds_latency_from_source 
-# MAGIC FROM bronze.order
+# MAGIC FROM bronze.shipment_scan_event
 # MAGIC group by all
-# MAGIC order by cast(data.generated_at as timestamp) desc LIMIT 100
+# MAGIC order by cast(data.generated_at as timestamp) ASC LIMIT 200
 
 # METADATA ********************
 
@@ -692,7 +692,7 @@ display(status_df)
 # MAGIC SELECT generated_at, (unix_millis(_processing_timestamp) - unix_millis(generated_at)) / 1000.0 AS seconds_latency_from_source 
 # MAGIC FROM silver.shipment_scan_event
 # MAGIC group by all
-# MAGIC order by generated_at desc LIMIT 100
+# MAGIC order by generated_at ASC LIMIT 200
 
 # METADATA ********************
 
