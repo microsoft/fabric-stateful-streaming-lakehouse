@@ -132,8 +132,8 @@ if __name__ == "__main__":
         'await_termination': True, # await_termination needed to keep Spark job from reaching terminal state
         'job_lock_timeout_seconds': 60, # Timeout for acquiring job lock to prevent multiple concurrent runs of the same job
         'job_lock_path': f"{lakehouse_root_uri}/Files/job_locks", # abfss path for job locks because it's not written via spark
-	'job_lock_enabled': True,
-	'job_id': 'stateful_streaming_lakehouse'
+		'job_lock_enabled': True,
+		'job_id': 'stateful_streaming_lakehouse'
     }
 
     # Step 2: Initialize controller
