@@ -638,14 +638,14 @@ display(status_df)
 # >
 # > This keeps the landing directory small so listing stays fast. ArcFlow handles this automatically via the `archive_uri` config. Message brokers avoid the problem entirely — offset tracking is O(1) regardless of history depth.
 # 
-# 🎯 Run the below queries and build a line chart to visualize the latency of each streaming batch
+# 🎯 Run the below queries and build a line chart to visualize the latency of each streaming batch.
 
 
 # CELL ********************
 
 # MAGIC %%sql
-# MAGIC SELECT data.generated_at, _processing_timestamp, (unix_millis(_processing_timestamp) - unix_millis(cast(data.generated_at as timestamp))) / 1000.0 AS seconds_latency_from_source 
-# MAGIC FROM bronze.shipment_scan_event
+# MAGIC SELECT cast(data.generated_at as timestamp) as generated_at, (unix_millis(_processing_timestamp) - unix_millis(cast(data.generated_at as timestamp))) / 1000.0 AS seconds_latency_from_source 
+# MAGIC FROM bronze.order
 # MAGIC group by all
 # MAGIC order by cast(data.generated_at as timestamp) desc LIMIT 100
 
@@ -659,7 +659,7 @@ display(status_df)
 # CELL ********************
 
 # MAGIC %%sql
-# MAGIC SELECT generated_at, _processing_timestamp, (unix_millis(_processing_timestamp) - unix_millis(generated_at)) / 1000.0 AS seconds_latency_from_source 
+# MAGIC SELECT generated_at, (unix_millis(_processing_timestamp) - unix_millis(generated_at)) / 1000.0 AS seconds_latency_from_source 
 # MAGIC FROM silver.shipment_scan_event
 # MAGIC group by all
 # MAGIC order by generated_at desc LIMIT 100
@@ -670,6 +670,10 @@ display(status_df)
 # META   "language": "sparksql",
 # META   "language_group": "synapse_pyspark"
 # META }
+
+# MARKDOWN ********************
+
+# The normalized and parsed input data is not ready for analytical queries!
 
 # CELL ********************
 
