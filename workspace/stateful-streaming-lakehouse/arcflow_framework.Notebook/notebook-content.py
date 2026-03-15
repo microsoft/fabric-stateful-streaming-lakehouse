@@ -28,7 +28,7 @@
 
 # # Streaming Lakehouse with ArcFlow — Thinking Like a Software Engineer
 # 
-# > **Module 2 · Part 2** | ~30 min | Level 300
+# > **Module 2 · Part 2** | ~30 min | Level 400
 # 
 # In Part 1 you built a raw → bronze → silver pipeline with plain PySpark. It works — but is it production-ready?
 # 
@@ -232,7 +232,7 @@ from arcflow import FlowConfig, StageConfig, ZonePipeline
 
 # MARKDOWN ********************
 
-# 🎯 Creating a new YAML file in the Resources tab on the left pane:
+# ###### 🎯 **USER TASK**: Creating a new YAML file in the Resources tab on the left pane:
 # 1. Click **Resources**
 # 1. Click the 3 dots `...` next **Built-in** and choose **New file**
 # 1. Name file as `pipeline.yml`
@@ -273,7 +273,7 @@ tables:
 
 # MARKDOWN ********************
 
-# 🎯 Click the editor **save** button. Next, add the `shipment_scan_events` Event Hub connection string as the `source_uri` in your `pipeline.yml` file:
+# ###### 🎯 **USER TASK**: Click the editor **save** button. Next, add the `shipment_scan_events` Event Hub connection string as the `source_uri` in your `pipeline.yml` file:
 # 
 # 1. Go to your **Fabric Workspace**
 # 1. Open the **shipment_scan_events** Eventstream inside the `stateful-streaming-lakehouse` folder
@@ -293,7 +293,7 @@ tables:
 
 from arcflow import load_yaml_config, Controller, ZonePipeline
 
-tables, dimensions, config = load_yaml_config("./builtin/pipeline.yml")
+tables, config = load_yaml_config("./builtin/pipeline.yml")
 
 # METADATA ********************
 
@@ -332,7 +332,7 @@ display(df_preview)
 
 # MARKDOWN ********************
 
-# 🎯 Update the cell above: change `raw=True` to `raw=False` (or remove the parameter entirely) and re-run. Notice how the `body` column now has the schema applied — the framework handles deserialization automatically.
+# ###### 🎯 **USER TASK**: Update the cell above: change `raw=True` to `raw=False` (or remove the parameter entirely) and re-run. Notice how the `body` column now has the schema applied — the framework handles deserialization automatically.
 # 
 # Next, run the cell below using `test_output` to see the data **as it would be written** to the target bronze Delta table. Expand the `body` column and notice how field names are automatically normalized to `snake_case` — no extra boilerplate, as it's built into the framework.
 
@@ -419,7 +419,7 @@ def silver_shipment_scan_event(df) -> DataFrame:
 
 # MARKDOWN ********************
 
-# 🎯 Update `pipeline.yml` to add `custom_transform: explode_message_payload` to the bronze zone, then click **save** in the file editor.
+# ###### 🎯 **USER TASK**: Update `pipeline.yml` to add `custom_transform: explode_message_payload` to the bronze zone config in your `pipeline.yml` file, then click **save** in the file editor.
 # 
 # Run the cell below to reload the configuration and see the updated bronze output with the exploded message payload applied:
 
@@ -427,7 +427,7 @@ def silver_shipment_scan_event(df) -> DataFrame:
 # CELL ********************
 
 # reload configuration
-tables, dimensions, config = load_yaml_config("./builtin/pipeline.yml")
+tables, config = load_yaml_config("./builtin/pipeline.yml")
 
 pipeline = ZonePipeline(
     spark=spark,
@@ -444,11 +444,24 @@ display(df_preview)
 # META   "language_group": "synapse_pyspark"
 # META }
 
+# CELL ********************
+
+# Asset that the DataFrame output is as expected
+assert df_preview.columns == ['_meta', 'data', '_processing_timestamp'], \
+    AssertionError("Revisit the last '🎯 USER TASK:' step, `custom_transform: explode_message_payload` must be added to the bronze zone config in your `pipeline.yml` file!")
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
 # MARKDOWN ********************
 
 # ### Test End-to-End: Bronze → Silver
 # 
-# 🎯 Add the silver zone to `pipeline.yml` by appending the following under the `zones:` key:
+# ###### 🎯 **USER TASK**: Add the silver zone to `pipeline.yml` by appending the following under the `zones:` key:
 # 
 # ```yaml
 # silver:
@@ -465,7 +478,7 @@ display(df_preview)
 # CELL ********************
 
 # reload configuration
-tables, dimensions, config = load_yaml_config("./builtin/pipeline.yml")
+tables, config = load_yaml_config("./builtin/pipeline.yml")
 
 pipeline = ZonePipeline(
     spark=spark,
@@ -474,6 +487,19 @@ pipeline = ZonePipeline(
 )
 df_preview = pipeline.test_output(tables["shipment_scan_event"], limit=10)
 display(df_preview)
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+# Asset that the DataFrame output is as expected
+assert df_preview.columns == ['enqueued_time','producer','record_type','schema_version','additional_data','current_destination_facility_id','current_origin_facility_id','current_service_level','employee_id','estimated_arrival_time','event_id','event_timestamp','event_type','exception_code','exception_severity','facility_id','generated_at','location_latitude','location_longitude','next_waypoint_facility_id','organization_id','planned_path_snapshot','related_exception_event_id','resolution_action','route_id','scan_device_id','schedule_id','sequence_number','shipment_id','sort_lane_id','sorting_equipment_id','tracking_number','delivery_review','_processing_timestamp'], \
+    AssertionError("Revisit the last '🎯 USER TASK:' step, the silver zone configuration must be added in your `pipeline.yml` file!")
 
 # METADATA ********************
 
@@ -530,7 +556,7 @@ display(status_df)
 
 # MARKDOWN ********************
 
-# ###### 🎯 Write a query or run the below to explore the data streaming into the `silver.shipment_scan_event_test` table.
+# ###### 🎯 **USER TASK**: Write a query or run the below to explore the data streaming into the `silver.shipment_scan_event_test` table.
 
 # CELL ********************
 
@@ -568,7 +594,7 @@ controller.stop_all()
 
 # ### Batch Mode with Stateful Processing
 # 
-# 🎯 Switch to Batch Mode: Remember the `availableNow` trigger from Part 1? Update `trigger_mode` to `availableNow` in your `pipeline.yml`, save, and re-run the pipeline below.
+# ###### 🎯 **USER TASK**: Switch to Batch Mode: Remember the `availableNow` trigger from Part 1? Update `trigger_mode` to `availableNow` in your `pipeline.yml`, save, and re-run the pipeline below.
 # 
 # This runs a **batch job with streaming state** — it processes all available data since the last checkpoint and stops. You get incremental processing without a long-running stream. Schedule this from a [Data Factory Pipeline](https://learn.microsoft.com/en-us/fabric/data-factory/notebook-activity) on any interval for use cases that don't require low-latency updates.
 # 
@@ -610,6 +636,10 @@ display(status_df)
 
 # MARKDOWN ********************
 
+# > **Tip:** If `bronze_shipment_scan_event_stream` continues to become active again, make sure to revisit the last '🎯 USER TASK'. The `trigger_mode` should be changed to `availableNow` to use the streaming API in batch trigger mode.
+
+# MARKDOWN ********************
+
 # ## 4 — Explore the Production Pipeline
 # 
 # While you've been working through this notebook, the `stream_all_zones` Spark Job Definition has been running ArcFlow in the background — streaming **all 9 entities** through bronze and silver continuously via event-driven declarative orchestration.
@@ -638,7 +668,7 @@ display(status_df)
 # >
 # > This keeps the landing directory small so listing stays fast. ArcFlow handles this automatically via the `archive_uri` config. Message brokers avoid the problem entirely — offset tracking is O(1) regardless of history depth.
 # 
-# 🎯 Run the below queries and build a line chart to visualize the latency of each streaming batch.
+# ###### 🎯 **USER TASK**: Run the below queries and build a line chart to visualize the latency of each streaming batch.
 
 
 # CELL ********************

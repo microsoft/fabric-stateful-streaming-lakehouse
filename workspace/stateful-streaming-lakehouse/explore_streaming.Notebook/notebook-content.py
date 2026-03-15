@@ -75,21 +75,21 @@
 
 # MARKDOWN ********************
 
-# # Prerequisite Step
+# ## Prerequisite Setup
 # Before we explore Spark fundamentals, you need to **start the production-grade Spark Job Definition** that will both generate our synthetic data and process the input data throughout of this lab.
 # 
 
 
 # MARKDOWN ********************
 
-# ## 🎯 Step 1: Get the Eventstream connection strings
+# ### 🎯 Step 1: Get the Eventstream connection strings
 # 
 # You will need **two connection strings** from the Eventstream:
 # 
 # - **Producer connection string** → from **PackageScanners** custom endpoint
 # - **Consumer connection string** → from **Spark** custom endpoint
 # 
-# ### 1. Copy the Producer Connection String
+# #### 1. Copy the Producer Connection String
 # 
 # 1. In the **Fabric Workspace** (left navigation), open the `stateful-streaming-lakehouse` folder.  
 # 1. Open the **shipment_scan_events** **Eventstream**.  
@@ -99,7 +99,7 @@
 # 1. Click **Copy** to copy the connection string.
 # 1. **Paste** as the value for the `producer_connection_string` Python variable in the cell below
 # 
-# ### 2. Copy the Consumer Connection String
+# #### 2. Copy the Consumer Connection String
 # 
 # 1. In the stream diagram, select the **Spark** destination.  
 # 1. Ensure the **Event Hub protocol** is selected.  
@@ -122,7 +122,7 @@ consumer_connection_string = "<PASTE Spark connection string>"
 
 # MARKDOWN ********************
 
-# ## 🎯 Step 2: Populate SJD Command Line Arguments
+# ### 🎯 Step 2: Populate SJD Command Line Arguments
 # 
 # 1. Run the below cell to form the command line arguments for our Spark Job Definition
 # 1. **Copy** the output
@@ -149,7 +149,7 @@ print(f"--producer-connection-string {producer_connection_string} --consumer-con
 
 # MARKDOWN ********************
 
-# ### ⏳ Waiting for Streaming Data
+# ### ⏳ Step 3: Waiting for Streaming Data
 # 
 # 
 # > **Run the next cell** and grab a sip of coffee ☕ — the below waits until our stream produces its first output file.  
@@ -187,11 +187,11 @@ while True:
 
 # MARKDOWN ********************
 
-# # 🌊 Why Structured Streaming?
+# ## 1 — Why Structured Streaming?
 # 
 # **Structured Streaming** is Spark's powerful engine for processing data streams, but it's useful far beyond just real-time, low-latency scenarios. Here's why it's commonly used in modern data engineering:
 # 
-# ### 🎯 Key Benefits
+# ### 💡 Key Benefits
 # 
 # 1. **Built-in Incremental Processing**
 #    - Automatically tracks which data has been processed
@@ -231,7 +231,7 @@ while True:
 # MARKDOWN ********************
 
 # 
-# ## 1 — Why Structured Streaming for a Batch Pipelines?
+# ### 🌊 Why Structured Streaming for a Batch Pipelines?
 # 
 # [Structured Streaming](https://spark.apache.org/docs/3.5.6/structured-streaming-programming-guide.html) is not just for "real-time" data requirements — it is often the engine of choice for **incremental batch** pipelines too. Two features make it ideal for typical batch architectures:
 # 
@@ -469,7 +469,7 @@ shipment_schema = spark.read.json(
 # CELL ********************
 
 from pyspark.sql.types import *
-schema = StructType([StructField('_meta', StructType([StructField('enqueuedTime', StringType(), True), StructField('producer', StringType(), True), StructField('recordType', StringType(), True), StructField('schemaVersion', StringType(), True)]), True), StructField('data', ArrayType(StructType([StructField('CommittedDeliveryDate', StringType(), True), StructField('CurrentFacilityId', StringType(), True), StructField('CustomerId', StringType(), True), StructField('CustomerName', StringType(), True), StructField('DeclaredValue', DoubleType(), True), StructField('DestinationAddress', StringType(), True), StructField('DestinationCity', StringType(), True), StructField('DestinationCountry', StringType(), True), StructField('DestinationFacilityId', StringType(), True), StructField('DestinationLatitude', DoubleType(), True), StructField('DestinationLongitude', DoubleType(), True), StructField('DestinationState', StringType(), True), StructField('DestinationZipCode', StringType(), True), StructField('Distance', DoubleType(), True), StructField('GeneratedAt', StringType(), True), StructField('Height', DoubleType(), True), StructField('IsFragile', BooleanType(), True), StructField('IsHazardous', BooleanType(), True), StructField('LateDeliveryPenaltyPerDay', DoubleType(), True), StructField('Length', DoubleType(), True), StructField('OrderId', StringType(), True), StructField('OrderLineList', ArrayType(LongType(), True), True), StructField('OrganizationId', LongType(), True), StructField('OriginAddress', StringType(), True), StructField('OriginCity', StringType(), True), StructField('OriginCountry', StringType(), True), StructField('OriginFacilityId', StringType(), True), StructField('OriginLatitude', DoubleType(), True), StructField('OriginLongitude', DoubleType(), True), StructField('OriginState', StringType(), True), StructField('OriginZipCode', StringType(), True), StructField('RequiresRefrigeration', BooleanType(), True), StructField('ServiceLevel', StringType(), True), StructField('ShipDate', StringType(), True), StructField('ShipmentId', StringType(), True), StructField('SpecialInstructions', StringType(), True), StructField('TrackingNumber', StringType(), True), StructField('Volume', DoubleType(), True), StructField('Weight', DoubleType(), True), StructField('Width', DoubleType(), True)]), True), True)])
+shipment_schema = StructType([StructField('_meta', StructType([StructField('enqueuedTime', StringType(), True), StructField('producer', StringType(), True), StructField('recordType', StringType(), True), StructField('schemaVersion', StringType(), True)]), True), StructField('data', ArrayType(StructType([StructField('CommittedDeliveryDate', StringType(), True), StructField('CurrentFacilityId', StringType(), True), StructField('CustomerId', StringType(), True), StructField('CustomerName', StringType(), True), StructField('DeclaredValue', DoubleType(), True), StructField('DestinationAddress', StringType(), True), StructField('DestinationCity', StringType(), True), StructField('DestinationCountry', StringType(), True), StructField('DestinationFacilityId', StringType(), True), StructField('DestinationLatitude', DoubleType(), True), StructField('DestinationLongitude', DoubleType(), True), StructField('DestinationState', StringType(), True), StructField('DestinationZipCode', StringType(), True), StructField('Distance', DoubleType(), True), StructField('GeneratedAt', StringType(), True), StructField('Height', DoubleType(), True), StructField('IsFragile', BooleanType(), True), StructField('IsHazardous', BooleanType(), True), StructField('LateDeliveryPenaltyPerDay', DoubleType(), True), StructField('Length', DoubleType(), True), StructField('OrderId', StringType(), True), StructField('OrderLineList', ArrayType(LongType(), True), True), StructField('OrganizationId', LongType(), True), StructField('OriginAddress', StringType(), True), StructField('OriginCity', StringType(), True), StructField('OriginCountry', StringType(), True), StructField('OriginFacilityId', StringType(), True), StructField('OriginLatitude', DoubleType(), True), StructField('OriginLongitude', DoubleType(), True), StructField('OriginState', StringType(), True), StructField('OriginZipCode', StringType(), True), StructField('RequiresRefrigeration', BooleanType(), True), StructField('ServiceLevel', StringType(), True), StructField('ShipDate', StringType(), True), StructField('ShipmentId', StringType(), True), StructField('SpecialInstructions', StringType(), True), StructField('TrackingNumber', StringType(), True), StructField('Volume', DoubleType(), True), StructField('Weight', DoubleType(), True), StructField('Width', DoubleType(), True)]), True), True)])
 
 # METADATA ********************
 
@@ -814,7 +814,7 @@ df.createOrReplaceTempView("order_preview")
 # 
 # ---
 # 
-# ##### 🎯 To simplify reading from the Eventstream, add an Eventstream connection via the _Data items_ pane on the left:
+# ##### 🎯 **USER TASK**: To simplify reading from the Eventstream, add an Eventstream connection via the _Data items_ pane on the left:
 # 1. Make sure the **Data items** tab is selected in the left-side _Explorer_
 # 1. Click **Add data items**
 # 1. Choose **From Real-Time Hub**
@@ -912,7 +912,6 @@ shipment_scan_event_schema=StructType( [ StructField( "_meta", StructType( [ Str
 # start here
 
 
-
 # METADATA ********************
 
 # META {
@@ -922,6 +921,29 @@ shipment_scan_event_schema=StructType( [ StructField( "_meta", StructType( [ Str
 
 # MARKDOWN ********************
 
+# <details>
+#   <summary><strong>🔑 Solution:</strong> Click to reveal the answer</summary>
+# 
+# <br/>
+# 
+# **Approach:** see the following cells for an explanation of each step
+# 
+# ```python
+# transformed_df = shipment_scan_event_df \
+#     .withColumn("value", sf.col("value").cast("string")) \
+#     .withColumn('value', sf.from_json(sf.col('value'), shipment_scan_event_schema)) \
+#     .select('value.*') \
+#     .selectExpr("explode(data) as shipment_scan_event") \
+#     .selectExpr("shipment_scan_event.*")
+# 
+# display(transformed_df)
+# ```
+# 
+# **Key Takeaway:** the Spark DataFrame API makes it possible to do very complex data engineering with very few lines of code.
+#   
+# </details>
+# 
+# 
 # #### Binary to String
 # 
 # The Kafka `value` column arrives as **binary**. Cast it to a string so we can read the content and next apply JSON parsing:
