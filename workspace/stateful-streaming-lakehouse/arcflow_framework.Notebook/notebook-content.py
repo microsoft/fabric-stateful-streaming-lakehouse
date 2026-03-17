@@ -521,8 +521,8 @@ assert df_preview.columns == ['enqueued_time','producer','record_type','schema_v
 
 # CELL ********************
 
-tables, dimensions, config = load_yaml_config("./builtin/pipeline.yml")
-controller = Controller(spark, config, tables, dimensions)
+tables, config = load_yaml_config("./builtin/pipeline.yml")
+controller = Controller(spark, config, tables)
 
 controller.run_full_pipeline(zones=['bronze', 'silver'])
 
@@ -603,8 +603,8 @@ controller.stop_all()
 
 # CELL ********************
 
-tables, dimensions, config = load_yaml_config("./builtin/pipeline.yml")
-controller = Controller(spark, config, tables, dimensions)
+tables, config = load_yaml_config("./builtin/pipeline.yml")
+controller = Controller(spark, config, tables)
 
 controller.run_full_pipeline(zones=['bronze', 'silver'])
 
