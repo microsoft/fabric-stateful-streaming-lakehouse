@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
   "metadata": {
     "type": "Notebook",
-    "displayName": "arcflow_framework",
+    "displayName": "01_explore-streaming",
     "description": "New notebook"
   },
   "config": {
     "version": "2.0",
-    "logicalId": "c08a30c8-d807-9320-4674-98d1d22120f1"
+    "logicalId": "fe07855a-286d-b1cc-4c6b-4d491c9d5b84"
   }
 }
