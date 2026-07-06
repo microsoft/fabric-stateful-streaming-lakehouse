@@ -156,3 +156,26 @@ if __name__ == "__main__":
     # Step 3: Run full pipeline
     logger.info("Starting full ELT pipeline...")
     controller.run_full_pipeline(zones=['bronze', 'silver'])
+
+    if True: # map to args.run_for_n_minutes in the future
+        # Pipeline is non-blocking — wait for the requested duration, then stop gracefully
+        run_seconds = 60 * 60 # static 60 minute run duration
+        logger.info(f"Pipeline will run for {run_seconds / 60} minutes ({int(run_seconds)}s)")
+    
+        deadline = time.time() + run_seconds
+        try:
+            while time.time() < deadline:
+                remaining = deadline - time.time()
+                time.sleep(min(remaining, 30))
+                elapsed = int(time.time() + run_seconds - deadline)
+                logger.info(
+                    f"  [{elapsed // 60}m {elapsed % 60:02d}s / "
+                    f"{int(run_seconds // 60)}m elapsed]"
+                )
+        except KeyboardInterrupt:
+            logger.info("Interrupted — stopping early")
+    
+        logger.info("Time limit reached — stopping data generator and streams")
+        data_gen.stop()
+        controller.stop_all()
+        logger.info("Pipeline finished successfully")
