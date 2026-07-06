@@ -4,7 +4,7 @@
   "mainClass": "",
   "additionalLakehouseIds": [],
   "retryPolicy": null,
-  "commandLineArguments": "--run-for-n-minutes 60",
+  "commandLineArguments": "",
   "additionalLibraryUris": [
     "pipeline_config.py"
   ],
