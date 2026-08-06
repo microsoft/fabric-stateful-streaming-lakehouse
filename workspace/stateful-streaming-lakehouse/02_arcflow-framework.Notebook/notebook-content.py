@@ -166,7 +166,7 @@
 # # Configuration (FlowConfig dataclass OR YAML)
 # tables['shipment_scan_event'] = FlowConfig(
 #     name='shipment_scan_event',
-#     format='eventhub',
+#     format='kafka',
 #     source_uri='Endpoint=sb://...',
 #     schema=StructType(...),
 #     zones={
@@ -254,7 +254,7 @@ config:
 # ── Table registry ────────────────────────────────────────────
 tables:
   shipment_scan_event:
-    format: eventhub
+    format: kafka
     source_uri: Endpoint=sb://...
     schema: {'type': 'struct', 'fields': [{'name': '_meta', 'type': {'type': 'struct', 'fields': [{'name': 'enqueuedTime', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'producer', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'recordType', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'schemaVersion', 'type': 'string', 'nullable': True, 'metadata': {}}]}, 'nullable': True, 'metadata': {}}, {'name': 'data', 'type': {'type': 'array', 'elementType': {'type': 'struct', 'fields': [{'name': 'AdditionalData', 'type': {'type': 'struct', 'fields': [{'name': 'condition', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'loadId', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'method', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'note', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'reason', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'reroute', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'resolution', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'review', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'signedBy', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'sortDecision', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'stopSequence', 'type': 'long', 'nullable': True, 'metadata': {}}, {'name': 'transportType', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'vehicleId', 'type': 'string', 'nullable': True, 'metadata': {}}]}, 'nullable': True, 'metadata': {}}, {'name': 'CurrentDestinationFacilityId', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'CurrentOriginFacilityId', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'CurrentServiceLevel', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'EmployeeId', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'EstimatedArrivalTime', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'EventId', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'EventTimestamp', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'EventType', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'ExceptionCode', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'ExceptionSeverity', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'FacilityId', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'GeneratedAt', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'LocationLatitude', 'type': 'double', 'nullable': True, 'metadata': {}}, {'name': 'LocationLongitude', 'type': 'double', 'nullable': True, 'metadata': {}}, {'name': 'NextWaypointFacilityId', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'OrganizationId', 'type': 'long', 'nullable': True, 'metadata': {}}, {'name': 'PlannedPathSnapshot', 'type': {'type': 'array', 'elementType': 'string', 'containsNull': True}, 'nullable': True, 'metadata': {}}, {'name': 'RelatedExceptionEventId', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'ResolutionAction', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'RouteId', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'ScanDeviceId', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'ScheduleId', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'SequenceNumber', 'type': 'long', 'nullable': True, 'metadata': {}}, {'name': 'ShipmentId', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'SortLaneId', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'SortingEquipmentId', 'type': 'string', 'nullable': True, 'metadata': {}}, {'name': 'TrackingNumber', 'type': 'string', 'nullable': True, 'metadata': {}}]}, 'containsNull': True}, 'nullable': True, 'metadata': {}}]}
     zones:
@@ -275,6 +275,8 @@ tables:
 
 # ###### 🎯 **USER TASK**: Click the editor **save** button. Next, add the `shipment_scan_events` Event Hub connection string as the `source_uri` in your `pipeline.yml` file:
 # 
+# _Note: ArcFlow automatically converts the EventHub connection string to the proper Kafka connection string format since Kafka is specified as the input format. The Azure EventHub Spark connector doesn't support Spark 4 so we default to using the Kafka connector._
+# 
 # 1. Go to your **Fabric Workspace**
 # 1. Open the **shipment_scan_events** Eventstream inside the `stateful-streaming-lakehouse` folder
 # 1. Click the **Spark** _Destination_
@@ -284,7 +286,7 @@ tables:
 # 1. Return to the **arcflow_elt_framework** notebook and paste the connection string into `source_uri`, replacing `Endpoint=sb://...`. Ensure there is a space after `source_uri:` — it should look like `source_uri: Endpoint=sb://...`
 # 1. Click the **save** icon in the file editor
 # 
-# > ⚠️ **Security note:** In production, store secrets in [Azure Key Vault](https://learn.microsoft.com/azure/key-vault/general/overview) and access them via Python. Inline connection strings are acceptable for demo purposes only.
+# > ⚠️ **Security note:** In production, it's best to use identity based authentication. Using the running user identity, the Eventstream endpoint connection string can be retrieved via API. If static credentials need to be used, store secrets in [Azure Key Vault](https://learn.microsoft.com/azure/key-vault/general/overview) and access them via Python. Inline connection strings are acceptable for development and demo purposes only.
 # 
 # Run the cell below to load your YAML configuration:
 
@@ -824,6 +826,7 @@ display(status_df)
 # 
 # ### 📚 Further Reading
 # 
+# - [Structured Streaming in Fabric](https://learn.microsoft.com/en-us/fabric/data-engineering/structured-streaming-overview)
 # - [Spark Structured Streaming Programming Guide](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html)
 # - [Fabric Spark Job Definitions](https://learn.microsoft.com/fabric/data-engineering/create-spark-job-definition)
 # - [Delta Lake Streaming](https://docs.delta.io/latest/delta-streaming.html)
