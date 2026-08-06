@@ -34,7 +34,7 @@ CONFIGURATION:
 - Override config below in get_pipeline_config() as needed
 
 """
-from arcflow import Controller
+from arcflow import Controller, JobLockError
 from lakegen.generators.mcmillan_industrial_group import McMillanDataGen
 import notebookutils
 from pyspark.sql import SparkSession
@@ -43,6 +43,7 @@ import argparse
 
 import logging
 import sys
+import time
 
 # Configure logging
 logging.basicConfig(
@@ -155,7 +156,14 @@ if __name__ == "__main__":
 
     # Step 3: Run full pipeline
     logger.info("Starting full ELT pipeline...")
-    controller.run_full_pipeline(zones=['bronze', 'silver'])
+    try:
+        controller.run_full_pipeline(zones=['bronze', 'silver'])
+    except JobLockError:
+        logger.exception(
+            "ArcFlow could not acquire the job lock; failing this job run"
+        )
+        data_gen.stop()
+        raise
 
     if True: # map to args.run_for_n_minutes in the future
         # Pipeline is non-blocking — wait for the requested duration, then stop gracefully
