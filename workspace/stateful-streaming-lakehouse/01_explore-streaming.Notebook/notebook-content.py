@@ -82,74 +82,17 @@
 
 # MARKDOWN ********************
 
-# ### 🎯 Step 1: Get the Eventstream connection strings
+# ### 🎯 Run Spark Job Definition
 # 
-# You will need **two connection strings** from the Eventstream:
-# 
-# - **Producer connection string** → from **PackageScanners** custom endpoint
-# - **Consumer connection string** → from **Spark** custom endpoint
-# 
-# #### 1. Copy the Producer Connection String
-# 
-# 1. In the **Fabric Workspace** (left navigation), open the `stateful-streaming-lakehouse` folder.  
-# 1. Open the **shipment_scan_events** **Eventstream**.  
-# 1. In the stream diagram, select the **PackageScanners** endpoint.  
-# 1. Ensure the **Event Hub protocol** is selected.  
-# 1. Click **Show** next to **Connection string-primary key**.  
-# 1. Click **Copy** to copy the connection string.
-# 1. **Paste** as the value for the `producer_connection_string` Python variable in the cell below
-# 
-# #### 2. Copy the Consumer Connection String
-# 
-# 1. In the stream diagram, select the **Spark** destination.  
-# 1. Ensure the **Event Hub protocol** is selected.  
-# 1. Click **Show** next to **Connection string-primary key**.  
-# 1. Click **Copy** to copy the connection string.
-# 1. **Paste** as the value for the `consumer_connection_string` Python variable in the cell below
-
-
-# CELL ********************
-
-producer_connection_string = "<PASTE PackageScanners connection string>"
-consumer_connection_string = "<PASTE Spark connection string>"
-
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
-
-# MARKDOWN ********************
-
-# ### 🎯 Step 2: Populate SJD Command Line Arguments
-# 
-# 1. Run the below cell to form the command line arguments for our Spark Job Definition
-# 1. **Copy** the output
 # 1. Go to the [stream_all_zones](https://app.powerbi.com/groups/$workspaceId/sparkjobdefinitions/$sparkJobDefinitionId?experience=fabric-developer) Spark Job Definition
-# 1. **Paste** the value into the `Command line arguments` field
-# 1. Click **Save** (top header ribbon)
 # 1. Click **Run** (top header ribbon)
 # 1. _After waiting 2-3 seconds_, expand the **Runs** tab at the bottom of the page
 # 1. Click the **Refresh** icon and you will see your Spark Job run has started
 # 1. Return to this notebook and move on to the next section
-# 
-
-
-# CELL ********************
-
-print(f"--producer-connection-string {producer_connection_string} --consumer-connection-string {consumer_connection_string}")
-
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
 
 # MARKDOWN ********************
 
-# ### ⏳ Step 3: Waiting for Streaming Data
+# ### ⏳ Waiting for Streaming Data
 # 
 # 
 # > **Run the next cell** and grab a sip of coffee ☕ — the below waits until our stream produces its first output file.  

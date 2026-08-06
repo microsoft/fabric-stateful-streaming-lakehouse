@@ -232,7 +232,7 @@ def silver_shipment_scan_event(df) -> DataFrame:
 
 tables["shipment_scan_event"] = FlowConfig(
     name="shipment_scan_event",
-    format="eventhub",
+    format="kafka",
     source_uri="",
     schema=StructType(
         [
