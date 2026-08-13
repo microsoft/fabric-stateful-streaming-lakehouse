@@ -85,7 +85,7 @@
 # ### 🎯 Run Spark Job Definition
 # 
 # 1. Go to the [stream_all_zones](https://app.powerbi.com/groups/$workspaceId/sparkjobdefinitions/$sparkJobDefinitionId?experience=fabric-developer) Spark Job Definition
-# 1. Click **Run** (top header ribbon)
+# 1. Click **Run** (top header ribbon). _Note: you only need to run it once, any overlapping runs will fail due to a programmatic job lock in the SJD main definition file._
 # 1. _After waiting 2-3 seconds_, expand the **Runs** tab at the bottom of the page
 # 1. Click the **Refresh** icon and you will see your Spark Job run has started
 # 1. Return to this notebook and move on to the next section
@@ -664,7 +664,7 @@ mem_query.awaitTermination()
 
 # MARKDOWN ********************
 
-# ### 🎯 Challenge: Query the Order Table
+# ### 🎯 Challenge: Query the Temporary View
 # 
 # Query the `order_preivew` temporary view just like you would with a table.
 # 

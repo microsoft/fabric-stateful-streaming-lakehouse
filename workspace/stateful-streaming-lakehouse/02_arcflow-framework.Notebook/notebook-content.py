@@ -283,7 +283,7 @@ tables:
 # 1. With the _Event Hub_ protocol selected, click **SAS Key Authentication**
 # 1. Click the **Show** icon next to **Connection string-primary key**
 # 1. Click the **Copy** icon to save it to your clipboard
-# 1. Return to the **arcflow_elt_framework** notebook and paste the connection string into `source_uri`, replacing `Endpoint=sb://...`. Ensure there is a space after `source_uri:` — it should look like `source_uri: Endpoint=sb://...`
+# 1. Return to the **02_arcflow-framework** notebook and paste the connection string into `source_uri`, replacing `Endpoint=sb://...`. Ensure there is a space after `source_uri:` — it should look like `source_uri: Endpoint=sb://...`
 # 1. Click the **save** icon in the file editor
 # 
 # > ⚠️ **Security note:** In production, it's best to use identity based authentication. Using the running user identity, the Eventstream endpoint connection string can be retrieved via API. If static credentials need to be used, store secrets in [Azure Key Vault](https://learn.microsoft.com/azure/key-vault/general/overview) and access them via Python. Inline connection strings are acceptable for development and demo purposes only.
