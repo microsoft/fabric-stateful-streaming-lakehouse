@@ -232,7 +232,7 @@ def main(argv):
             max_events_per_second=1000,
             concurrenct_threads=1
         )
-        data_gen.start(verbose=False)
+        data_gen.start(verbose=False, background=True)
 
         logger.info("=" * 80)
         logger.info("Starting ArcFlow ELT Framework")
@@ -246,7 +246,9 @@ def main(argv):
             'landing_uri': "Files/landing",
             'trigger_interval': '2 seconds', # default if not set at table level
             'event_driven_chaining': True, # if True, downstream transformations will be triggered immediately after upstream completes instead of waiting for next trigger interval
-            'await_termination': True, # await_termination needed to keep Spark job from reaching terminal state
+            # A timed run must return from run_full_pipeline so this process can enforce its deadline.
+            # Without a deadline, block to keep the Spark Job Definition running continuously.
+            'await_termination': args.run_for_n_minutes is None,
             'job_lock_timeout_seconds': 60, # Timeout for acquiring job lock to prevent multiple concurrent runs of the same job
             'job_lock_path': f"{lakehouse_root_uri}/Files/job_locks", # abfss path for job locks because it's not written via spark
 	    	'job_lock_enabled': False, # Disable job lock since a job lock is already aquired to wrap the data generator
@@ -267,7 +269,7 @@ def main(argv):
         logger.info("Starting full ELT pipeline...")
         controller.run_full_pipeline(zones=['bronze', 'silver'])
 
-        if args.run_for_n_minutes:
+        if args.run_for_n_minutes is not None:
             # Pipeline is non-blocking — wait for the requested duration, then stop gracefully
             run_seconds = 60 * args.run_for_n_minutes
             logger.info(f"Pipeline will run for {run_seconds / 60} minutes ({int(run_seconds)}s)")
